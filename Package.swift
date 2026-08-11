@@ -10,7 +10,7 @@ let package = Package(
         .package(url: "https://github.com/swift-foundations/swift-http-body.git", revision: "1d3bb5ffb1fa4a9e429c863a0af7416f91355901"),
         .package(url: "https://github.com/swift-primitives/swift-pool-primitives.git", revision: "b7c710c945b7c8467b4521c3a2d5b00539275593"),
         .package(url: "https://github.com/swift-foundations/swift-io.git", branch: "main"),
-        .package(url: "https://github.com/swift-foundations/swift-sockets.git", revision: "3fad32626d347cbfc0e803496e7ad9c0e66162db"),
+        .package(url: "https://github.com/swift-foundations/swift-sockets.git", revision: "74a57fa388e07e09f985fee89075577993c75c5b"),
         .package(url: "https://github.com/swift-foundations/swift-tls.git", revision: "e27e99f5c841170593dde7b0396e9090a7515f62"),
     ],
     targets: [
