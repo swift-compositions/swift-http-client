@@ -24,7 +24,7 @@ Then add the `HTTP Client` product to the target that executes HTTP exchanges:
 - `HTTP.Client` exposes its work as `HTTP.Transport<HTTP.Client.Error>`.
 - `HTTP.Retry.Policy` bounds retries to replayable, idempotent exchanges.
 - `HTTP.ConnectionReuse` makes the return-or-destroy decision explicit for every `Pool.Lease` resource.
-- `HTTP.Client.Network` records the `DNS`, `IO`/`Sockets`, and `TLS` values a connection factory composes.
+- `HTTP.Client.Network` records the `IO`/`Sockets` and `TLS` values a connection factory composes; DNS resolution uses the configuration's sole `TLS.Peer.Identity`.
 
 ## Architecture
 

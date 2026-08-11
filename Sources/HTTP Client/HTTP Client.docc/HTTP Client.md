@@ -6,7 +6,7 @@ It does not define HTTP messages or bodies, perform DNS resolution, open sockets
 
 ## Connection identity
 
-Install a distinct lease coordinator for each `HTTP.Client.Connection.Key` (`scheme`, `hostname`, `port`, `peerIdentity`). A key is not shared across authorities or security modes. The adapter must reject any request whose selected authority does not match its lease coordinator.
+Install a distinct lease coordinator for each `HTTP.Client.Connection.Key` (`scheme`, `port`, `identity`). `TLS.Peer.Identity` is the sole relation between the DNS question and the hostname used for SNI and certificate authentication; neither `HTTP.Client.Network` nor the connection key repeats either projection. A key is not shared across authorities or security modes. The adapter must reject any request whose selected authority does not match its lease coordinator.
 
 ## Retry and reuse
 
@@ -16,4 +16,4 @@ Cancellation before or during lease use reaches `HTTP.Client.Error.cancelled` or
 
 ## Pending producer seam
 
-The current producer APIs do not expose a typed client-facing factory that can atomically: resolve `DNS.Query`, race or select `IP.Address` values, connect through `IO<Sockets.Capabilities>`, hand a `Sockets.TCP.Connection` to `TLS.Engine.Witness`, and map its typed failures into `HTTP.Client.Error` while preserving `Pool.Lease` creation failure semantics. This package therefore accepts an already-configured `Pool.Lease<HTTP.Client.Connection>` and records the exact network inputs as `HTTP.Client.Network`. It does not fabricate that adapter locally.
+The current producer APIs do not expose a typed client-facing factory that can atomically: resolve `TLS.Configuration.identity.query`, race or select `IP.Address` values, connect through `IO<Sockets.Capabilities>`, hand a `Sockets.TCP.Connection` to `TLS.Engine.Witness`, and map its typed failures into `HTTP.Client.Error` while preserving `Pool.Lease` creation failure semantics. This package therefore accepts an already-configured `Pool.Lease<HTTP.Client.Connection>` and records the exact network inputs as `HTTP.Client.Network`. It does not fabricate that adapter locally.

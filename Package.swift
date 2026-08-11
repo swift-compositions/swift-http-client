@@ -7,12 +7,11 @@ let package = Package(
     platforms: [.macOS(.v26), .iOS(.v26), .tvOS(.v26), .watchOS(.v26), .visionOS(.v26)],
     products: [.library(name: "HTTP Client", targets: ["HTTP Client"])],
     dependencies: [
-        .package(url: "https://github.com/swift-foundations/swift-http-body.git", branch: "feature/tx-n5-n7a-http-body-transport"),
+        .package(url: "https://github.com/swift-foundations/swift-http-body.git", revision: "1d3bb5ffb1fa4a9e429c863a0af7416f91355901"),
         .package(url: "https://github.com/swift-foundations/swift-pools.git", revision: "4ace862"),
         .package(url: "https://github.com/swift-foundations/swift-io.git", branch: "main"),
-        .package(url: "https://github.com/swift-foundations/swift-sockets.git", revision: "6c5efce9c6eff708ee0f6f301eda46c87419b14d"),
-        .package(url: "https://github.com/swift-foundations/swift-domain-name-system.git", revision: "4bd74b5"),
-        .package(url: "https://github.com/swift-foundations/swift-tls.git", revision: "bf58a95a2a4cf70078075237d8d6b72b5e367eba"),
+        .package(url: "https://github.com/swift-foundations/swift-sockets.git", revision: "3fad32626d347cbfc0e803496e7ad9c0e66162db"),
+        .package(url: "https://github.com/swift-foundations/swift-tls.git", revision: "8c37e32d5af95109c66ede18f0d044e1c62da3ee"),
         .package(url: "https://github.com/swift-primitives/swift-either-primitives.git", branch: "main"),
     ],
     targets: [
@@ -23,7 +22,6 @@ let package = Package(
                 .product(name: "Pools", package: "swift-pools"),
                 .product(name: "IO", package: "swift-io"),
                 .product(name: "Sockets", package: "swift-sockets"),
-                .product(name: "Domain Name System", package: "swift-domain-name-system"),
                 .product(name: "TLS", package: "swift-tls"),
                 .product(name: "TLS Engine Interface", package: "swift-tls"),
                 .product(name: "Either Primitives", package: "swift-either-primitives"),

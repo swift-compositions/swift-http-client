@@ -15,17 +15,15 @@ extension RFC_9110.Client {
         }
 
         /// A stable pool partition. Connections never cross this identity.
-        public struct Key: Sendable, Equatable, Hashable {
+        public struct Key: Sendable {
             public let scheme: String
-            public let hostname: String
             public let port: Int
-            public let peerIdentity: String
+            public let identity: TLS.Peer.Identity
 
-            public init(scheme: String, hostname: String, port: Int, peerIdentity: String) {
+            public init(scheme: String, port: Int, identity: TLS.Peer.Identity) {
                 self.scheme = scheme
-                self.hostname = hostname
                 self.port = port
-                self.peerIdentity = peerIdentity
+                self.identity = identity
             }
         }
 

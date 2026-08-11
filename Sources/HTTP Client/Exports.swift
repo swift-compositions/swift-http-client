@@ -1,6 +1,5 @@
 @_exported public import HTTP_Transport
 
-public import DNS
 public import Either_Primitives
 public import IO
 public import Pools
