@@ -30,6 +30,8 @@ Then add the `HTTP Client` product to the target that executes HTTP exchanges:
 
 The client owns exchange execution, retry, and lease disposition. HTTP message and body structure remains in `HTTP Transport`; DNS, sockets, TLS, certificate verification, and pools remain at their respective owners. The current public producer seams require callers to supply an already-configured `Pool.Lease<HTTP.Client.Connection>`; the pending atomic connection-factory signature is documented in the package's DocC article.
 
+The exact TLS dependency exposes `TLS.Session` as a non-Sendable, uniquely owned value transferred into one owning region. HTTP Client retains only reusable TLS configuration and engine-witness values, so this producer transition requires no client source adapter or compatibility shim.
+
 ## License
 
 Apache License 2.0.
