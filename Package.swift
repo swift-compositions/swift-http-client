@@ -10,9 +10,9 @@ let package = Package(
         .package(url: "https://github.com/swift-foundations/swift-http-body.git", branch: "feature/tx-n5-n7a-http-body-transport"),
         .package(url: "https://github.com/swift-foundations/swift-pools.git", revision: "4ace862"),
         .package(url: "https://github.com/swift-foundations/swift-io.git", branch: "main"),
-        .package(url: "https://github.com/swift-foundations/swift-sockets.git", branch: "main"),
+        .package(url: "https://github.com/swift-foundations/swift-sockets.git", revision: "6c5efce9c6eff708ee0f6f301eda46c87419b14d"),
         .package(url: "https://github.com/swift-foundations/swift-domain-name-system.git", revision: "4bd74b5"),
-        .package(url: "https://github.com/swift-foundations/swift-tls.git", branch: "feature/tx-n4-tls-core-engines"),
+        .package(url: "https://github.com/swift-foundations/swift-tls.git", revision: "bf58a95a2a4cf70078075237d8d6b72b5e367eba"),
         .package(url: "https://github.com/swift-primitives/swift-either-primitives.git", branch: "main"),
     ],
     targets: [
