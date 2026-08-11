@@ -3,7 +3,7 @@ extension RFC_9110.Client {
     ///
     /// `Context` names composition, not a second socket/DNS/TLS implementation.
     /// A factory resolves `tls.identity.query`, connects through `io`, and hands the socket to
-    /// `engine`; its resulting `Connection` is installed in a `Pool.Lease` by
+    /// `engine`; its resulting `Connection` is installed in a `Pool.Bounded` by
     /// the application boundary.
     public struct Network: Sendable {
         public let io: IO<Sockets.Capabilities>

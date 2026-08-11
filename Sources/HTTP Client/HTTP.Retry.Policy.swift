@@ -2,13 +2,12 @@ extension RFC_9110.Retry {
     /// A finite retry policy for idempotent, replayable exchanges.
     public struct Policy: Sendable {
         public let maximumAttempts: Int
-        public let shouldRetry: @Sendable (HTTP.Exchange.Request<HTTP.Client.Error>, HTTP.Client.Error) -> Bool
+        public let shouldRetry: @Sendable (HTTP.Request.Head, HTTP.Client.Error) -> Bool
 
         public init(
             maximumAttempts: Int = 3,
-            shouldRetry: @escaping @Sendable (HTTP.Exchange.Request<HTTP.Client.Error>, HTTP.Client.Error) -> Bool = { request, failure in
-                guard case .none = request.body else { return false }
-                guard HTTP.Retry.Policy.idempotent(request.head.method) else { return false }
+            shouldRetry: @escaping @Sendable (HTTP.Request.Head, HTTP.Client.Error) -> Bool = { head, failure in
+                guard HTTP.Retry.Policy.idempotent(head.method) else { return false }
                 switch failure {
                 case .cancelled, .retry: false
                 case .pool, .connection: true

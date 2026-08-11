@@ -3,8 +3,8 @@ extension RFC_9110.Client {
     ///
     /// The client does not implement DNS, sockets, TLS, framing, or bodies. A
     /// connection adapter supplies those operations at this witness seam and
-    /// reports whether the completed exchange may return to its `Pool.Lease`.
-    public final class Connection: Sendable {
+    /// reports whether the completed exchange may return to its `Pool.Bounded`.
+    public struct Connection: ~Copyable {
         /// A semantic transport failure, deliberately not a leaked substrate error.
         public enum Failure: Swift.Error, Sendable {
             case resolution
@@ -27,26 +27,57 @@ extension RFC_9110.Client {
             }
         }
 
-        /// Result metadata supplied by the wire adapter after it has determined framing safety.
-        public struct Result: Sendable {
-            public let response: HTTP.Exchange.Response<HTTP.Client.Error>
-            public let reuse: HTTP.ConnectionReuse
+        /// A response and the connection disposition proved by the wire adapter.
+        public enum Result: ~Copyable, Sendable {
+            case reusable(HTTP.Exchange.Response<HTTP.Client.Error>)
+            case invalid(HTTP.Exchange.Response<HTTP.Client.Error>)
 
-            public init(response: HTTP.Exchange.Response<HTTP.Client.Error>, reuse: HTTP.ConnectionReuse) {
-                self.response = response
-                self.reuse = reuse
+            public init(
+                response: consuming HTTP.Exchange.Response<HTTP.Client.Error>,
+                reuse: HTTP.ConnectionReuse
+            ) {
+                switch reuse {
+                case .reusable:
+                    self = .reusable(response)
+                case .invalid:
+                    self = .invalid(response)
+                }
+            }
+        }
+
+        /// One exclusively owned HTTP exchange operation.
+        public struct Operation: ~Copyable {
+            @usableFromInline
+            let call: (consuming HTTP.Exchange.Request<HTTP.Client.Error>) async throws(HTTP.Client.Error) -> sending Result
+
+            public init(
+                _ call: sending @escaping (consuming HTTP.Exchange.Request<HTTP.Client.Error>) async throws(HTTP.Client.Error) -> sending Result
+            ) {
+                self.call = call
+            }
+
+            public borrowing func callAsFunction(
+                _ request: consuming HTTP.Exchange.Request<HTTP.Client.Error>
+            ) async throws(HTTP.Client.Error) -> sending Result {
+                try await call(consume request)
             }
         }
 
         public let key: Key
-        public let execute: @Sendable (HTTP.Exchange.Request<HTTP.Client.Error>) async throws(HTTP.Client.Error) -> Result
+        public let operation: Operation
 
         public init(
             key: Key,
-            execute: @escaping @Sendable (HTTP.Exchange.Request<HTTP.Client.Error>) async throws(HTTP.Client.Error) -> Result
+            operation: consuming Operation
         ) {
             self.key = key
-            self.execute = execute
+            self.operation = consume operation
+        }
+
+        public borrowing func execute(
+            _ request: consuming HTTP.Exchange.Request<HTTP.Client.Error>
+        ) async throws(HTTP.Client.Error) -> sending Result {
+            try await operation(consume request)
         }
     }
 }

@@ -4,9 +4,9 @@ extension RFC_9110 {
         public let retry: HTTP.Retry.Policy
 
         @usableFromInline
-        let connections: Pool.Lease<Connection>
+        let connections: Pool.Bounded<Connection>
 
-        public init(connections: Pool.Lease<Connection>, retry: HTTP.Retry.Policy = .init()) {
+        public init(connections: Pool.Bounded<Connection>, retry: HTTP.Retry.Policy = .init()) {
             self.connections = connections
             self.retry = retry
         }

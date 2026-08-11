@@ -8,23 +8,21 @@ let package = Package(
     products: [.library(name: "HTTP Client", targets: ["HTTP Client"])],
     dependencies: [
         .package(url: "https://github.com/swift-foundations/swift-http-body.git", revision: "1d3bb5ffb1fa4a9e429c863a0af7416f91355901"),
-        .package(url: "https://github.com/swift-foundations/swift-pools.git", revision: "4ace862"),
+        .package(url: "https://github.com/swift-primitives/swift-pool-primitives.git", revision: "b7c710c945b7c8467b4521c3a2d5b00539275593"),
         .package(url: "https://github.com/swift-foundations/swift-io.git", branch: "main"),
         .package(url: "https://github.com/swift-foundations/swift-sockets.git", revision: "3fad32626d347cbfc0e803496e7ad9c0e66162db"),
         .package(url: "https://github.com/swift-foundations/swift-tls.git", revision: "e27e99f5c841170593dde7b0396e9090a7515f62"),
-        .package(url: "https://github.com/swift-primitives/swift-either-primitives.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "HTTP Client",
             dependencies: [
                 .product(name: "HTTP Transport", package: "swift-http-body"),
-                .product(name: "Pools", package: "swift-pools"),
+                .product(name: "Pool Bounded Primitives", package: "swift-pool-primitives"),
                 .product(name: "IO", package: "swift-io"),
                 .product(name: "Sockets", package: "swift-sockets"),
                 .product(name: "TLS", package: "swift-tls"),
                 .product(name: "TLS Engine Interface", package: "swift-tls"),
-                .product(name: "Either Primitives", package: "swift-either-primitives"),
             ]
         ),
         .testTarget(name: "HTTP Client Tests", dependencies: ["HTTP Client"]),

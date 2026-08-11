@@ -1,37 +1,59 @@
 extension RFC_9110.Client {
-    /// Executes one exchange through an exclusive connection lease.
+    /// Executes one exchange through an exclusively checked-out connection.
     public func execute(
-        _ request: HTTP.Exchange.Request<HTTP.Client.Error>
-    ) async throws(HTTP.Client.Error) -> HTTP.Exchange.Response<HTTP.Client.Error> {
-        try await execute(request, attempt: 1)
+        _ request: consuming HTTP.Exchange.Request<HTTP.Client.Error>
+    ) async throws(HTTP.Client.Error) -> sending HTTP.Exchange.Response<HTTP.Client.Error> {
+        let head = request.head
+        switch consume request.body {
+        case .none:
+            return try await execute(head: head, attempt: 1)
+        case .bytes(let bytes):
+            return try await executeOnce(.init(head: head, body: .bytes(bytes)))
+        case .stream(let stream):
+            return try await executeOnce(.init(head: head, body: .stream(stream)))
+        }
     }
 }
 
 extension RFC_9110.Client {
     @usableFromInline
     func execute(
-        _ request: HTTP.Exchange.Request<HTTP.Client.Error>,
+        head: HTTP.Request.Head,
         attempt: Int
-    ) async throws(HTTP.Client.Error) -> HTTP.Exchange.Response<HTTP.Client.Error> {
+    ) async throws(HTTP.Client.Error) -> sending HTTP.Exchange.Response<HTTP.Client.Error> {
         guard !Task.isCancelled else { throw .cancelled }
 
-        do throws(Either<Pool.Lifecycle.Error, HTTP.Client.Error>) {
-            return try await connections.acquire { connection in
-                let result = try await connection.execute(request)
-                switch result.reuse {
-                case .reusable: .reusable(result.response)
-                case .invalid: .invalid(result.response)
-                }
+        do throws(HTTP.Client.Error) {
+            return try await executeOnce(.init(head: head))
+        } catch let failure {
+            guard retry.shouldRetry(head, failure) else { throw failure }
+            guard attempt < retry.maximumAttempts else { throw .retry(.init(attempts: attempt)) }
+            return try await execute(head: head, attempt: attempt + 1)
+        }
+    }
+
+    @usableFromInline
+    func executeOnce(
+        _ request: consuming HTTP.Exchange.Request<HTTP.Client.Error>
+    ) async throws(HTTP.Client.Error) -> sending HTTP.Exchange.Response<HTTP.Client.Error> {
+        let handle: Pool.Bounded<Connection>.Handle
+        do throws(Pool.Lifecycle.Error) {
+            handle = try await connections.checkout()
+        } catch {
+            throw .pool(error)
+        }
+
+        do throws(HTTP.Client.Error) {
+            let result = try await handle.resource.execute(consume request)
+            switch consume result {
+            case .reusable(let response):
+                return await handle.resolve(.reusable(response))
+            case .invalid(let response):
+                return await handle.resolve(.invalid(response))
             }
         } catch {
-            let failure: HTTP.Client.Error
-            switch error {
-            case .left(let pool): failure = .pool(pool)
-            case .right(let connection): failure = connection
-            }
-            guard retry.shouldRetry(request, failure) else { throw failure }
-            guard attempt < retry.maximumAttempts else { throw .retry(.init(attempts: attempt)) }
-            return try await execute(request, attempt: attempt + 1)
+            let failure = await handle.resolve(.invalid(error))
+            throw failure
         }
     }
 }
