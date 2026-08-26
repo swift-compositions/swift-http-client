@@ -33,7 +33,7 @@ extension HTTP.Endpoint {
                 let response: HTTP.Response
 
                 do throws(TransportFailure) {
-                    response = try await transport.run(request)
+                    response = try await transport(request)
                 } catch {
                     throw .left(.left(error))
                 }
@@ -45,6 +45,9 @@ extension HTTP.Endpoint {
                     outcome = try self.response.parse(&buffered)
                 } catch {
                     throw .left(.right(error))
+                }
+                guard case nil = buffered else {
+                    throw .left(.right(.response))
                 }
 
                 switch outcome {
