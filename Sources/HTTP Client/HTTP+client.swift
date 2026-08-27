@@ -1,54 +1,77 @@
 public import Client
-public import Coder_Primitive
 public import Either_Primitives
 public import HTTP
+public import HTTP_Coder
 public import HTTP_Router
+import Parser_Primitive
+public import RFC_9110
+import Serializer_Primitive
 
 extension HTTP {
-    public static func client<Domain, Response, Content, TransportFailure>(
-        _ domain: Domain.Type,
+    public static func client<Route, Response, Content, Failure>(
+        route: Route,
         response: Response,
-        transport: HTTP.Client<Content, TransportFailure>
+        transport: HTTP.Client<Content, Failure>
     ) -> Client::Client<
-        Domain.Call,
-        Domain.Call.Result,
-        Either<TransportFailure, Either<HTTP.Router.Error, Response.Failure>>
+        Route.Operation.Input,
+        Route.Operation.Output,
+        Either<
+            Either<Failure, HTTP.Coder.Error>,
+            Route.Operation.Failure
+        >
     >
     where
-        Domain: HTTP.Routable,
-        Domain.Route.Content == Content,
-        Response: Coder.`Protocol`,
-        Response.Input == HTTP.Message.Response<Content>?,
-        Response.Buffer == HTTP.Message.Response<Content>?,
-        Response.Output == Domain.Call.Result,
-        TransportFailure: Swift.Error
+        Route: HTTP.Routing,
+        Response: HTTP.Coding,
+        Route.Domain == Response.Domain,
+        Route.Operation == Response.Operation,
+        Route.Content == Content,
+        Response.Content == Content,
+        Failure: Swift.Error
     {
         .init(
-            run: { call throws(
-                Either<TransportFailure, Either<HTTP.Router.Error, Response.Failure>>
+            run: { input throws(
+                Either<
+                    Either<Failure, HTTP.Coder.Error>,
+                    Route.Operation.Failure
+                >
             ) in
                 let request: HTTP.Message.Request<Content>
-                do throws(HTTP.Router.Error) {
+                do throws(HTTP.Coder.Error) {
                     var buffer: HTTP.Message.Request<Content>?
-                    try Domain.router.serialize(call, into: &buffer)
+                    try route.serialize(input, into: &buffer)
                     guard let buffer else { throw .unprintable }
                     request = buffer
                 } catch {
-                    throw .right(.left(error))
+                    throw .left(.right(error))
                 }
 
                 let received: HTTP.Message.Response<Content>
-                do throws(TransportFailure) {
+                do throws(Failure) {
                     received = try await transport(request)
                 } catch {
-                    throw .left(error)
+                    throw .left(.left(error))
                 }
 
-                do throws(Response.Failure) {
+                let result: Swift.Result<
+                    Route.Operation.Output,
+                    Route.Operation.Failure
+                >
+                do throws(HTTP.Coder.Error) {
                     var buffer = Optional(received)
-                    return try response.parse(&buffer)
+                    result = try response.parse(&buffer)
+                    guard case nil = buffer else {
+                        throw .malformed
+                    }
                 } catch {
-                    throw .right(.right(error))
+                    throw .left(.right(error))
+                }
+
+                switch result {
+                case .success(let output):
+                    return output
+                case .failure(let refusal):
+                    throw .right(refusal)
                 }
             }
         )

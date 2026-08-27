@@ -4,7 +4,7 @@ import HTTP_Client
 import Testing
 
 @Test
-func transportPreservesContent() async throws {
+func `transport preserves content`() async throws {
     let transport = HTTP.Client<String, Never>(
         run: { request in
             .init(status: .ok, content: request.content)
