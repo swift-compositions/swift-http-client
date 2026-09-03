@@ -1,11 +1,11 @@
 public import Client
-public import Either_Primitives
+public import Either
 public import HTTP
 public import HTTP_Coder
 public import HTTP_Router
-import Parser_Primitive
+import Parser
 public import RFC_9110
-import Serializer_Primitive
+import Serializer
 
 extension HTTP {
     public static func client<Route, Response, Content, Failure>(
