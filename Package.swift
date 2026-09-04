@@ -33,10 +33,11 @@ let package = Package(
         .package(url: "https://github.com/swift-molecules/swift-tagged-coder.git", branch: "main"),
         .package(url: "https://github.com/swift-compositions/swift-client.git", branch: "main"),
         .package(url: "https://github.com/swift-compositions/swift-client-derivation.git", branch: "main"),
-        .package(url: "https://github.com/swift-compositions/swift-http.git", branch: "main"),
-        .package(url: "https://github.com/swift-compositions/swift-http-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-standards/swift-http.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-http-router.git", branch: "main"),
         .package(url: "https://github.com/swift-compositions/swift-signature-derivation.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-9110.git", branch: "main"),
     ],
     targets: [
         .target(
@@ -45,7 +46,7 @@ let package = Package(
                 .product(name: "Client", package: "swift-client"),
                 .product(name: "Client Derivation", package: "swift-client-derivation"),
                 .product(name: "HTTP", package: "swift-http"),
-                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "HTTP Router", package: "swift-http-router"),
             ]
         ),
         .testTarget(
@@ -60,7 +61,8 @@ let package = Package(
                 .product(name: "Coder", package: "swift-coder"),
                 .product(name: "Either", package: "swift-either"),
                 .product(name: "HTTP", package: "swift-http"),
-                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "HTTP Reply", package: "swift-http-router"),
+                .product(name: "HTTP Router", package: "swift-http-router"),
                 .product(name: "Operation", package: "swift-operation"),
                 .product(name: "Operation Coder", package: "swift-operation-coder"),
                 .product(name: "Optic", package: "swift-optic"),
@@ -68,6 +70,7 @@ let package = Package(
                 .product(name: "Parser", package: "swift-parser"),
                 .product(name: "Parser Skip", package: "swift-parser"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
+                .product(name: "RFC 9110", package: "swift-rfc-9110"),
                 .product(name: "Serializer", package: "swift-serializer"),
                 .product(name: "Signature Derivation", package: "swift-signature-derivation"),
                 .product(name: "String Coder", package: "swift-string-coder"),
