@@ -1,12 +1,12 @@
 public import Client
 public import HTTP
-public import RFC_9110
+public import HTTP_Coder
 
 extension HTTP {
-    public typealias Client<Content, Failure: Swift.Error> =
-        Client::Client<
-            HTTP.Message.Request<Content>,
-            HTTP.Message.Response<Content>,
-            Failure
-        >
+
+    public typealias Client<Failure: Swift.Error> = Client::Client<
+        HTTP.Router.Request,
+        HTTP.Router.Response,
+        Failure
+    >
 }

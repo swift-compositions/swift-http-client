@@ -15,62 +15,65 @@ let package = Package(
         .library(
             name: "HTTP Client",
             targets: ["HTTP Client"]
-        )
+        ),
     ],
     dependencies: [
-        .package(
-            url: "https://github.com/swift-compositions/swift-client.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-compositions/swift-http.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-compositions/swift-http-coder.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-compositions/swift-http-router.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-ietf/swift-rfc-9110.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-atoms/swift-either.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-atoms/swift-parser.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-atoms/swift-serializer.git",
-            branch: "main"
-        ),
+        .package(url: "https://github.com/swift-atoms/swift-byte.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-either.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-operation.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-optic.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-parser.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-serializer.git", branch: "main"),
+        .package(url: "https://github.com/swift-atoms/swift-tagged.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-byte-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-operation-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-optic-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-string-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-molecules/swift-tagged-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-client.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-client-derivation.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-http.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-http-coder.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-signature-derivation.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
     ],
     targets: [
         .target(
             name: "HTTP Client",
             dependencies: [
                 .product(name: "Client", package: "swift-client"),
+                .product(name: "Client Derivation", package: "swift-client-derivation"),
                 .product(name: "HTTP", package: "swift-http"),
                 .product(name: "HTTP Coder", package: "swift-http-coder"),
-                .product(name: "HTTP Router", package: "swift-http-router"),
-                .product(name: "Either", package: "swift-either"),
-                .product(name: "RFC 9110", package: "swift-rfc-9110"),
-                .product(name: "Parser", package: "swift-parser"),
-                .product(name: "Serializer", package: "swift-serializer"),
             ]
         ),
         .testTarget(
             name: "HTTP Client Tests",
             dependencies: [
                 "HTTP Client",
+                .product(name: "Byte", package: "swift-byte"),
+                .product(name: "Byte Coder", package: "swift-byte-coder"),
+                .product(name: "Byte Standard Library Integration", package: "swift-byte"),
                 .product(name: "Client", package: "swift-client"),
+                .product(name: "Client Derivation", package: "swift-client-derivation"),
+                .product(name: "Coder", package: "swift-coder"),
+                .product(name: "Either", package: "swift-either"),
                 .product(name: "HTTP", package: "swift-http"),
+                .product(name: "HTTP Coder", package: "swift-http-coder"),
+                .product(name: "Operation", package: "swift-operation"),
+                .product(name: "Operation Coder", package: "swift-operation-coder"),
+                .product(name: "Optic", package: "swift-optic"),
+                .product(name: "Optic Coder", package: "swift-optic-coder"),
+                .product(name: "Parser", package: "swift-parser"),
+                .product(name: "Parser Skip", package: "swift-parser"),
+                .product(name: "RFC 3986", package: "swift-rfc-3986"),
+                .product(name: "Serializer", package: "swift-serializer"),
+                .product(name: "Signature Derivation", package: "swift-signature-derivation"),
+                .product(name: "String Coder", package: "swift-string-coder"),
+                .product(name: "Tagged", package: "swift-tagged"),
+                .product(name: "Tagged Coder", package: "swift-tagged-coder"),
+                .product(name: "Tagged Standard Library Integration", package: "swift-tagged"),
             ]
         ),
     ],
@@ -78,7 +81,7 @@ let package = Package(
 )
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
-    target.swiftSettings = (target.swiftSettings ?? []) + [
+    let ecosystem: [SwiftSetting] = [
         .strictMemorySafety(),
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
@@ -87,4 +90,8 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableExperimentalFeature("Lifetimes"),
         .enableUpcomingFeature("InferIsolatedConformances"),
     ]
+
+    let package: [SwiftSetting] = []
+
+    target.swiftSettings = (target.swiftSettings ?? []) + ecosystem + package
 }
