@@ -35,7 +35,8 @@ let package = Package(
                 .product(name: "HTTP", package: "swift-http-router"),
                 .product(name: "RFC 9110", package: "swift-rfc-9110"),
                 .product(name: "Byte", package: "swift-byte"),
-            ]
+            ],
+            swiftSettings: [.enableExperimentalFeature("Extern")]
         ),
         .testTarget(
             name: "HTTP Client Tests",
