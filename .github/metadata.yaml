@@ -1,0 +1,7 @@
+description: "An HTTP client as a value: a request in, a response out, sent in process or through the browser's fetch."
+topics:
+  - foundations
+  - http
+homepage: "https://swift-institute.org"
+readme:
+  family: E
