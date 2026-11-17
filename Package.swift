@@ -15,7 +15,7 @@ let package = Package(
         .library(name: "HTTP Client Fetch", targets: ["HTTP Client Fetch"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/coenttb/swift-http-router.git", branch: "main"),
+        .package(url: "https://github.com/swift-compositions/swift-http-router.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-9110.git", branch: "main"),
         .package(url: "https://github.com/swift-atoms/swift-byte.git", branch: "main"),
     ],
