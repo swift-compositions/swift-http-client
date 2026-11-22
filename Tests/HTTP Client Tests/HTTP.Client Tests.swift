@@ -8,12 +8,12 @@ import Testing
 @Suite struct `HTTP.Client` {
     @Test func `an in-process client hands the request to the answer and returns its response`() async throws {
         let client = HTTP.Client.inProcess { request in
-            RFC_9110.Message.Response(status: 200, content: request.content.map { Array($0.reversed()) })
+            IETF.RFC.`9110`.Message.Response(status: 200, content: request.content.map { Array($0.reversed()) })
         }
         let response = try await client.send(
-            RFC_9110.Message.Request(
+            IETF.RFC.`9110`.Message.Request(
                 method: .post,
-                target: RFC_9110.Target(unchecked: "/echo"),
+                target: IETF.RFC.`9110`.Target(unchecked: "/echo"),
                 content: Array("abc".utf8).map { Byte(bitPattern: $0) }
             )
         )
@@ -22,10 +22,10 @@ import Testing
     }
 
     @Test func `a request frame is the method, the target, one line per field, a blank line, then the body`() throws {
-        let request = RFC_9110.Message.Request<[Byte]>(
+        let request = IETF.RFC.`9110`.Message.Request<[Byte]>(
             method: .post,
-            target: RFC_9110.Target(unchecked: "/law"),
-            headers: RFC_9110.Message.Headers([try RFC_9110.Field(name: "Content-Type", value: "text/plain")]),
+            target: IETF.RFC.`9110`.Target(unchecked: "/law"),
+            headers: IETF.RFC.`9110`.Message.Headers([try IETF.RFC.`9110`.Field(name: "Content-Type", value: "text/plain")]),
             content: Array("x=1".utf8).map { Byte(bitPattern: $0) }
         )
         let frame = String(decoding: HTTP.Client.Fetch.Frame.request(request), as: UTF8.self)

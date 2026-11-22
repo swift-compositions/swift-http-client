@@ -1,6 +1,6 @@
 # swift-http-client
 
-Use this package to send an RFC 9110 request and get its response without committing to how it travels. `HTTP.Client` is a value holding one function, `send`, from `RFC_9110.Message.Request<[Byte]>` to `RFC_9110.Message.Response<[Byte]>`, throwing `HTTP.Client.Error`. Build a typed client for a contract on top of it: print the request with swift-http-router, send it, and parse the reply the same router package defines. `HTTP.Client.inProcess(_:)` hands the request to a function in the same process, which is how a test sends every call through a server's answer without a network. `HTTP Client Fetch` gives `HTTP.Client.fetch`, which sends through the browser's `fetch` from Embedded Swift on WebAssembly.
+Use this package to send an RFC 9110 request and get its response without committing to how it travels. `HTTP.Client` is a value holding one function, `send`, from `IETF.RFC.`9110`.Message.Request<[Byte]>` to `IETF.RFC.`9110`.Message.Response<[Byte]>`, throwing `HTTP.Client.Error`. Build a typed client for a contract on top of it: print the request with swift-http-router, send it, and parse the reply the same router package defines. `HTTP.Client.inProcess(_:)` hands the request to a function in the same process, which is how a test sends every call through a server's answer without a network. `HTTP Client Fetch` gives `HTTP.Client.fetch`, which sends through the browser's `fetch` from Embedded Swift on WebAssembly.
 
 ## Laws
 
