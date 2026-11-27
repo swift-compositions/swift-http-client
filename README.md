@@ -6,6 +6,7 @@ Use this package to send an RFC 9110 request and get its response without commit
 
 - `inProcess(_:)` returns exactly what its function returns and never throws.
 - `HTTP.Client.fetch` exists only on wasm32. It throws `.unreachable` when the page reports that `fetch` failed, and `.malformed` when the page's answer is not a response frame.
+- `HTTP.Client.network(limit:timeout:clock:)` exists only with the trait `AsyncHTTPClient`, in the product `HTTP Client AsyncHTTPClient`. It sends over one shared connection pool that follows no redirect, gives a connection 5 seconds and a read 10. It reads at most `limit + 1` bytes of the body and then stops, so a body of `limit + 1` bytes tells the caller that the answer was longer than `limit`. It throws `.malformed` when the request target has no reference (the authority form and `*`), and `.unreachable` when the exchange fails, a relative target included, or takes longer than `timeout` on `clock`. The connection's own limits run on wall time whatever the clock.
 - A request frame is the method, a line feed, the request target, a line feed, one `name: value` line per field, an empty line, then the body's bytes. A response frame is the status code, a line feed, one `name: value` line per field, an empty line, then the body's bytes. A response frame with no empty line, or whose first line is not a number, is malformed.
 
 ## The page's side of fetch
